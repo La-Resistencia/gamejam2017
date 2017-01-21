@@ -49,7 +49,18 @@ function love.load()
         drop.t = 0
         drop.sound = dropaudio[math.random(7)]
 		table.insert(drops, drop)
-    end
+	end
+
+	paths = {}
+	insertPath = function(x1, y1, x2, y2)
+		path = {}
+		path.x1 = x1
+		path.y1 = y1
+		path.x2 = x2
+		path.y2 = y2
+
+		table.insert(paths, path)
+	end
 
     validateDrop = function(drop)
         if drop.t == 0 then
@@ -84,6 +95,32 @@ function love.update(dt)
     end
 
     ---PLATAFORMAS
+	paths = {}
+
+	for i, drop in pairs(drops) do
+		radio = math.floor(drop.t/10)
+		-- detect a interception with another drop wave
+		for j, drop2 in pairs(drops) do
+			if i ~= j then
+				radio2 = math.floor(drop2.t/10)
+				discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
+
+				if discriminator > 0 then
+					d = math.sqrt(discriminator)
+					l = (radio*radio - radio2*radio2 + d*d)/(2*d)
+					h = math.sqrt(radio*radio - l*l)
+
+					x1 = l/d*(drop2.x - drop.x) + h/d*(drop2.y - drop.y) + drop.x
+					y1 = l/d*(drop2.y - drop.y) - h/d*(drop2.x - drop.x) + drop.y
+
+					x2 = l/d*(drop2.x - drop.x) - h/d*(drop2.y - drop.y) + drop.x
+					y2 = l/d*(drop2.y - drop.y) + h/d*(drop2.x - drop.x) + drop.y
+
+					insertPath(x1, y1, x2, y2)
+				end
+			end
+		end
+	end
 
 	if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
 		player.x = player.x + player.speed
@@ -150,34 +187,14 @@ function love.draw()
 		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
         radio = math.floor(drop.t/10)
         love.graphics.circle("line", drop.x, drop.y, radio)
-
-        -- detect a interception with another drop wave
-
-        love.graphics.setLineWidth(10)
-        for j, drop2 in pairs(drops) do
-            if i ~= j then
-                radio2 = math.floor(drop2.t/10)
-
-                discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
-
-                if discriminator > 0 then
-                    love.graphics.setColor(0, 0, 180)
-
-                    d = math.sqrt(discriminator)
-                    l = (radio*radio - radio2*radio2 + d*d)/(2*d)
-                    h = math.sqrt(radio*radio - l*l)
-
-                    x1 = l/d*(drop2.x - drop.x) + h/d*(drop2.y - drop.y) + drop.x
-                    y1 = l/d*(drop2.y - drop.y) - h/d*(drop2.x - drop.x) + drop.y
-
-                    x2 = l/d*(drop2.x - drop.x) - h/d*(drop2.y - drop.y) + drop.x
-                    y2 = l/d*(drop2.y - drop.y) + h/d*(drop2.x - drop.x) + drop.y
-
-                    love.graphics.line(x1, y1, x2, y2)
-                    end
-                end
-            end
 	end
+
+	love.graphics.setLineWidth(10)
+	love.graphics.setColor(0, 0, 180)
+	for i, path in pairs(paths) do
+		love.graphics.line(path.x1, path.y1, path.x2, path.y2)
+	end
+
 	love.graphics.setColor(255,255,255)
 	love.graphics.draw(inicio,0,525,0,2.347)
 	love.graphics.draw(fin,49,0,0,3)
