@@ -64,7 +64,15 @@ function love.load()
         if drop.t > 600 then
             drop.t = 0
         end
-    end
+	end
+
+	validateTime = function()
+		if time <= 0 then
+			time = 0
+			-- end of game
+
+			end
+	end
 
     fpsCounter = 0
 
@@ -171,7 +179,13 @@ function love.draw()
 	end
 
 	-- timer
-	love.graphics.print(math.floor(time), 150, 10);
+	validateTime()
+	timeInteger = math.floor(time);
+	timeString = timeInteger;
+	if timeInteger < 10 then
+		timeString = "0"..timeString
+		end
+	love.graphics.print(timeString, 145, 10);
 
 
 end
