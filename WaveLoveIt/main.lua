@@ -177,6 +177,7 @@ function love.draw()
                 end
             end
 	end
+	love.graphics.setColor(255,255,255)
 	love.graphics.draw(inicio,0,525,0,2.347)
 	love.graphics.draw(fin,49,0,0,3)
 	validateTime()
