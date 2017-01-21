@@ -65,7 +65,7 @@ function love.load()
         	love.audio.play(drop.sound)
     	end
         drop.t = drop.t + 2.5
-        if drop.t > 600 then
+        if drop.t > 6000 then
             drop.t = 0
         end
     end
