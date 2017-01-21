@@ -12,6 +12,11 @@ success = love.window.setMode(338,600)
 backsound = love.audio.newSource('When The Wind Blows.mp3')
 backsound:setLooping(true)
 
+walkstone = love.audio.newSource('walk_stone.mp3')
+walkwater = love.audio.newSource('walk_water.mp3')
+dropaudio = {love.audio.newSource('drop1.mp3'),love.audio.newSource('drop2.mp3'), love.audio.newSource('drop3.mp3'), love.audio.newSource('drop4.mp3'),love.audio.newSource('drop5.mp3'),love.audio.newSource('drop6.mp3'),love.audio.newSource('drop7.mp3')}
+
+
 
 
 
@@ -20,7 +25,7 @@ function love.load()
 	player = {}
 	player.x = 165
 	player.y = 568
-	player.speed = 1
+	player.speed = 3
 
 	cursor = {}
 	cursor.x = 0
@@ -46,12 +51,14 @@ function love.load()
 		drop.x = x
 		drop.y = y
         drop.t = 0
+        drop.sound = dropaudio[math.random(7)]
 		table.insert(drops, drop)
     end
 
     validateDrop = function(drop)
-    	if drop.t == 0 then
-
+        if drop.t == 0 then
+        	drop.sound = dropaudio[math.random(7)]
+        	love.audio.play(drop.sound)
     	end
         drop.t = drop.t + 2.5
         if drop.t > 600 then
@@ -69,15 +76,19 @@ function love.update(dt)
 	love.audio.play(backsound)
 	if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
 		player.x = player.x + player.speed
+		love.audio.play(walkstone)
 	end
 	if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
 		player.x = player.x - player.speed
+		love.audio.play(walkstone)
 	end
 	if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
 		player.y = player.y + player.speed
+		love.audio.play(walkstone)
 	end
 	if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
 		player.y = player.y - player.speed
+		love.audio.play(walkstone)
 	end
 	if love.mouse.isDown(1) then
 		cursor.x = love.mouse.getX()
