@@ -64,7 +64,7 @@ function love.load()
         	drop.sound = dropaudio[math.random(7)]
         	love.audio.play(drop.sound)
     	end
-        drop.t = drop.t + 2.5
+        drop.t = drop.t + 1.5
         if drop.t > 600 then
             drop.t = 0
         end
@@ -151,7 +151,7 @@ function love.draw()
                 discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
 
                 if discriminator > 0 then
-                    love.graphics.setColor(0, 0, 0)
+                    love.graphics.setColor(0, 0, 180)
 
                     d = math.sqrt(discriminator)
                     l = (radio*radio - radio2*radio2 + d*d)/(2*d)
