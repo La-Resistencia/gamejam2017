@@ -64,7 +64,7 @@ function love.load()
         	drop.sound = dropaudio[math.random(7)]
         	love.audio.play(drop.sound)
     	end
-        drop.t = drop.t + 0.25
+        drop.t = drop.t + 2.5
         if drop.t > 600 then
             drop.t = 0
         end
