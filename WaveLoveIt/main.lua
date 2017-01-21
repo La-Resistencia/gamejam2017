@@ -42,6 +42,8 @@ function love.load()
 
 	drops = {}
 
+	contador=0
+
 	insertDrop = function (x, y)
 		drop = {}
 		drop.x = x
@@ -155,6 +157,7 @@ function love.update(dt)
 			end
 		end
 		if droped and cursor.cddrop <= 0 then
+			contador=contador+1
 			insertDrop(cursor.x,cursor.y);
 			cursor.cddrop = 2
 		end
@@ -189,7 +192,7 @@ function love.draw()
         love.graphics.circle("line", drop.x, drop.y, radio)
 	end
 
-	love.graphics.setLineWidth(10)
+	love.graphics.setLineWidth(30)
 	love.graphics.setColor(0, 0, 180)
 	for i, path in pairs(paths) do
 		love.graphics.line(path.x1, path.y1, path.x2, path.y2)
@@ -205,10 +208,12 @@ function love.draw()
 	end
 
 	love.graphics.setFont(font)
-	love.graphics.print(timeString, 9, 319);
+	love.graphics.print(timeString, 9, 319)
 	love.graphics.setFont(counterFont)
-	love.graphics.print("10", 18, 232);
-	love.graphics.print("9999", 250, 275);
+	love.graphics.print(contador, 18, 232)
+	love.graphics.print("9999", 250, 275)
+
+
 
 	player.animation:draw(player.x,player.y,0,1)
 end
