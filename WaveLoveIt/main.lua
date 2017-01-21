@@ -3,8 +3,10 @@ require("animation")
 love.window.setTitle("Wave Paths")
 love.graphics.setDefaultFilter('nearest','nearest')
 
-mar = love.graphics.newImage('Mar.png')
-maranim = newAnimation(mar,144,256,0.28,4)
+inicio = love.graphics.newImage('start.png')
+fin = love.graphics.newImage('end.png')
+
+maranim = newAnimation(love.graphics.newImage('Mar.png'),144,256,0.28,4)
 
 success = love.window.setMode(338,600)
 
@@ -64,13 +66,12 @@ function love.load()
         if drop.t > 600 then
             drop.t = 0
         end
-	end
+    end
 
-	validateTime = function()
+    validateTime = function()
 		if time <= 0 then
 			time = 0
 			-- end of game
-
 			end
 	end
 
@@ -131,7 +132,7 @@ function love.update(dt)
 	end
     for i, drop in pairs(drops) do
         validateDrop(drop)
-	end
+    end
 
 	time = time - dt
 end
@@ -139,7 +140,6 @@ end
 function love.draw()
 	love.graphics.setColor(255,255,255)
 	maranim:draw(0,0,0,4)
-	player.animation:draw(player.x,player.y,0,1)
 	for _,v in pairs(gotas) do
 		love.graphics.rectangle("fill",v.x-3,v.y-3,7,7)
 	end
@@ -177,15 +177,14 @@ function love.draw()
                 end
             end
 	end
-
-	-- timer
+	love.graphics.draw(inicio,0,525,0,2.347)
+	love.graphics.draw(fin,49,0,0,3)
 	validateTime()
 	timeInteger = math.floor(time);
 	timeString = timeInteger;
 	if timeInteger < 10 then
 		timeString = "0"..timeString
-		end
+	end
 	love.graphics.print(timeString, 145, 10);
-
-
+	player.animation:draw(player.x,player.y,0,1)
 end
