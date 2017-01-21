@@ -64,7 +64,7 @@ function love.load()
         	drop.sound = dropaudio[math.random(7)]
         	love.audio.play(drop.sound)
     	end
-        drop.t = drop.t + 2.5
+        drop.t = drop.t + 0.25
         if drop.t > 600 then
             drop.t = 0
         end
@@ -168,5 +168,4 @@ function love.draw()
                 end
             end
 	end
-	love.graphics.print("FPS "..tostring(love.timer.getFPS()),10,10)
 end
