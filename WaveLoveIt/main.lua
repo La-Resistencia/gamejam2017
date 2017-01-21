@@ -65,7 +65,7 @@ function love.load()
         	love.audio.play(drop.sound)
     	end
         drop.t = drop.t + 2.5
-        if drop.t > 6000 then
+        if drop.t > 600 then
             drop.t = 0
         end
     end
@@ -138,7 +138,7 @@ function love.draw()
         love.graphics.setLineWidth(1)
 		love.graphics.setColor(4, 121, 251)
 		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
-        radio = math.floor(drop.t/100)
+        radio = math.floor(drop.t/10)
         love.graphics.circle("line", drop.x, drop.y, radio)
 
         -- detect a interception with another drop wave
@@ -146,7 +146,7 @@ function love.draw()
         love.graphics.setLineWidth(10)
         for j, drop2 in pairs(drops) do
             if i ~= j then
-                radio2 = math.floor(drop2.t/100)
+                radio2 = math.floor(drop2.t/10)
 
                 discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
 
@@ -168,4 +168,5 @@ function love.draw()
                 end
             end
 	end
+	love.graphics.print("FPS "..tostring(love.timer.getFPS()),10,10)
 end
