@@ -133,7 +133,7 @@ function love.update(dt)
         validateDrop(drop)
     end
 
-    if time <= 0 and player.alive == false then
+    if time <= 0 or player.alive == false then
     	time = 0
     	love.audio.play(gameover)
     else
