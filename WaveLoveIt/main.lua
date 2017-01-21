@@ -4,67 +4,45 @@ love.graphics.setDefaultFilter('nearest','nearest')
 success = love.window.setMode(388,600)
 
 function love.load()
-	player = {}
-	player.x = 165
-	player.y = 568
-	player.speed = 1
+	drops = {}
 
-	cursor = {}
-	cursor.x = 0
-	cursor.y = 0
-	cursor.cd = 0
-	cursor.cddrop = 0
+	insertDrop = function (x, y)
+		drop = {}
+		drop.x = x
+		drop.y = y
+        drop.t = 0
+		table.insert(drops, drop)
+    end
 
-	gotas = {}
+    validateDrop = function(drop)
+        drop.t = drop.t + 1
+        if drop.t > 600 then
+            drop.t = 0
+        end
+    end
 
-	insertgota = function ()
-		gota = {}
-		gota.x = cursor.x
-		gota.y = cursor.y
-		table.insert(gotas,gota)
-	end
-
-	drop = true
+    fpsCounter = 0
 end
 
 function love.update(dt)
-	if love.keyboard.isDown("right") then
-		player.x = player.x + player.speed
-	end
-	if love.keyboard.isDown("left") then
-		player.x = player.x - player.speed
-	end
-	if love.keyboard.isDown("down") then
-		player.y = player.y + player.speed
-	end
-	if love.keyboard.isDown("up") then
-		player.y = player.y - player.speed
-	end
 	if love.mouse.isDown(1) then
-		cursor.x = love.mouse.getX()
-		cursor.y = love.mouse.getY()
-		for _,v in pairs(gotas) do
-			if cursor.x >= v.x-3 and cursor.x <= v.x+3 and cursor.y >= v.y-3 and cursor.y <= v.y+3 then
-				drop = false
-			end
-		end
-		if drop and cursor.cddrop <= 0 then
-			insertgota()
-			cursor.cddrop = 2
-		end
-		drop = true
-	end
-	if cursor.cddrop > 0 then
-		cursor.cddrop = cursor.cddrop - 4*dt
-	end
-	if cursor.cd > 0 then
-		cursor.cd = cursor.cd - 4*dt
+		insertDrop(love.mouse.getX(), love.mouse.getY());
 	end
 end
 
 function love.draw()
 	-- love.graphics.rectangle("fill", player.x, player.y, 30, 30)
-	for _,v in pairs(gotas) do
-		-- love.graphics.rectangle("fill", v.x-3, v.y-3, 7, 7)
+    -- fpsCounter = fpsCounter + 1
+
+    -- if fpsCounter < 3 then
+    --    return
+    -- end
+
+    -- fpsCounter = 0
+
+	for i, drop in pairs(drops) do
+        validateDrop(drop)
+		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
+        love.graphics.circle("line", drop.x, drop.y, math.floor(drop.t/10))
 	end
 end
