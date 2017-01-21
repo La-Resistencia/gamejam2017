@@ -189,10 +189,10 @@ function love.draw()
 
 	love.graphics.setColor(255,255,255)
 	love.graphics.setFont(font)
-	love.graphics.print(timeString, 145, 10);
+	love.graphics.print(timeString, 9, 319);
 	love.graphics.setFont(counterFont)
-	love.graphics.print("10", 40, 15);
-	love.graphics.print("9999", 250, 15);
+	love.graphics.print("10", 18, 232);
+	love.graphics.print("9999", 250, 275);
 
 	player.animation:draw(player.x,player.y,0,1)
 end
