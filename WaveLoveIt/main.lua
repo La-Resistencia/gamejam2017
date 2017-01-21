@@ -1,8 +1,7 @@
 require("animation")
 
-
 love.window.setTitle("Wave Paths")
-love.graphics.setDefaultFilter('nearest','nearest')
+love.graphics.setDefaultFilter('nearest', 'nearest')
 
 mar = love.graphics.newImage('Mar.png')
 maranim = newAnimation(mar,144,256,0.28,4)
@@ -15,11 +14,6 @@ backsound:setLooping(true)
 walkstone = love.audio.newSource('walk_stone.mp3')
 walkwater = love.audio.newSource('walk_water.mp3')
 dropaudio = {love.audio.newSource('drop1.mp3'),love.audio.newSource('drop2.mp3'), love.audio.newSource('drop3.mp3'), love.audio.newSource('drop4.mp3'),love.audio.newSource('drop5.mp3'),love.audio.newSource('drop6.mp3'),love.audio.newSource('drop7.mp3')}
-
-
-
-
-
 
 function love.load()
 	player = {}
@@ -67,8 +61,6 @@ function love.load()
     end
 
     fpsCounter = 0
-
-
 end
 
 function love.update(dt)
@@ -123,8 +115,37 @@ function love.draw()
 		love.graphics.rectangle("fill",v.x-3,v.y-3,7,7)
 	end
 	for i, drop in pairs(drops) do
+        love.graphics.setLineWidth(1)
 		love.graphics.setColor(4, 121, 251)
 		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
-        love.graphics.circle("line", drop.x, drop.y, math.floor(drop.t/10))
+        radio = math.floor(drop.t/10)
+        love.graphics.circle("line", drop.x, drop.y, radio)
+
+        -- detect a interception with another drop wave
+
+        love.graphics.setLineWidth( 10 )
+        for j, drop2 in pairs(drops) do
+            if i ~= j then
+                radio2 = math.floor(drop2.t/10)
+
+                discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
+
+                if discriminator > 0 then
+                    love.graphics.setColor(0, 0, 0)
+
+                    d = math.sqrt(discriminator)
+                    l = (radio*radio - radio2*radio2 + d*d)/(2*d)
+                    h = math.sqrt(radio*radio - l*l)
+
+                    x1 = l/d*(drop2.x - drop.x) + h/d*(drop2.y - drop.y) + drop.x
+                    y1 = l/d*(drop2.y - drop.y) - h/d*(drop2.x - drop.x) + drop.y
+
+                    x2 = l/d*(drop2.x - drop.x) - h/d*(drop2.y - drop.y) + drop.x
+                    y2 = l/d*(drop2.y - drop.y) + h/d*(drop2.x - drop.x) + drop.y
+
+                    love.graphics.line(x1, y1, x2, y2)
+                    end
+                end
+            end
 	end
 end
