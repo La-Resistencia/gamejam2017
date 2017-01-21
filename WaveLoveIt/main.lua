@@ -71,7 +71,23 @@ function love.load()
         if drop.t > 600 then
             drop.t = 0
         end
-    end
+	end
+
+	validaPlayerPosition = function()
+		for i, path in pairs(paths) do
+			discriminant = (path.y2 - path.y1)* (path.y2 - path.y1) + (path.x2 - path.x1)* (path.x2 - path.x1)
+
+			if discriminant > 0 then
+				distance = math.abs((path.y2 - path.y1)*player.x - (path.x2 - path.x1)*player.y + path.x2*path.y1 - path.y2*path.x1)/math.sqrt(discriminant)
+
+				if distance <= 30 then
+					return
+				end
+			end
+
+			time = 0
+		end
+	end
 
     fpsCounter = 0
 
