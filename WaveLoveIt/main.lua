@@ -30,21 +30,13 @@ function love.load()
 	player.y = 556
 	player.speed = 3
 	player.animation = abajopj1
+	player.alive = true
 
 	cursor = {}
 	cursor.x = 0
 	cursor.y = 0
 	cursor.cd = 0
 	cursor.cddrop = 0
-
-	gotas = {}
-
-	insertgota = function ()
-		gota = {}
-		gota.x = cursor.x
-		gota.y = cursor.y
-		table.insert(gotas,gota)
-	end
 
 	droped = true
 
@@ -81,6 +73,18 @@ end
 function love.update(dt)
 	maranim:update(dt)
 	love.audio.play(backsound)
+
+	player.alive = false
+    if player.x >= 49 and player.x <= 260 and player.y >= 0 and player.y <= 96 then
+    	love.audio.play(win)
+    	player.alive = true
+    end
+    if player.x >= 0 and player.x <= 309 and player.y >= 524 and player.y <= 600 then
+    	player.alive = true
+    end
+
+    ---PLATAFORMAS
+
 	if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
 		player.x = player.x + player.speed
 		love.audio.play(walkstone)
@@ -108,7 +112,7 @@ function love.update(dt)
 	if love.mouse.isDown(1) then
 		cursor.x = love.mouse.getX()
 		cursor.y = love.mouse.getY()
-		for _,v in pairs(gotas) do
+		for _,v in pairs(drops) do
 			if cursor.x >= v.x-3 and cursor.x <= v.x+3 and cursor.y >= v.y-3 and cursor.y <= v.y+3 then
 				droped = false
 			end
@@ -129,11 +133,7 @@ function love.update(dt)
         validateDrop(drop)
     end
 
-    if player.x >= 49 and player.x <=289 and player.y >= 0 and player.y <= 96 then
-    	love.audio.play(win)
-    end
-
-    if time <= 0 then
+    if time <= 0 and player.alive == false then
     	time = 0
     	love.audio.play(gameover)
     else
@@ -144,9 +144,6 @@ end
 function love.draw()
 	love.graphics.setColor(255,255,255)
 	maranim:draw(0,0,0,4)
-	for _,v in pairs(gotas) do
-		love.graphics.rectangle("fill",v.x-3,v.y-3,7,7)
-	end
 	for i, drop in pairs(drops) do
         love.graphics.setLineWidth(1)
 		love.graphics.setColor(4, 121, 251)
@@ -195,7 +192,6 @@ function love.draw()
 	love.graphics.setFont(counterFont)
 	love.graphics.print("10", 18, 232);
 	love.graphics.print("9999", 250, 275);
-
 
 	player.animation:draw(player.x,player.y,0,1)
 end
