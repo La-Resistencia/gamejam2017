@@ -49,9 +49,9 @@ function love.load()
         drop.t = 0
         drop.sound = dropaudio[math.random(7)]
 		table.insert(drops, drop)
-	end
+    end
 
-	paths = {}
+    paths = {}
 	insertPath = function(x1, y1, x2, y2)
 		path = {}
 		path.x1 = x1
@@ -86,16 +86,16 @@ function love.update(dt)
 	love.audio.play(backsound)
 
 	player.alive = false
-    if player.x >= 49 and player.x <= 260 and player.y >= 0 and player.y <= 96 then
+    if player.x >= 49 and player.x <= 260 and player.y >= 0 and player.y <= 66 then
     	love.audio.play(win)
     	player.alive = true
     end
-    if player.x >= 0 and player.x <= 309 and player.y >= 524 and player.y <= 600 then
+    if player.x >= 0 and player.x <= 309 and player.y >= 494 and player.y <= 600 then
     	player.alive = true
     end
 
     ---PLATAFORMAS
-	paths = {}
+    paths = {}
 
 	for i, drop in pairs(drops) do
 		radio = math.floor(drop.t/10)
@@ -122,25 +122,25 @@ function love.update(dt)
 		end
 	end
 
-	if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 308 then
 		player.x = player.x + player.speed
 		love.audio.play(walkstone)
 		derechapj1:update(dt)
 		player.animation = derechapj1
 	end
-	if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and player.x > 1 then
 		player.x = player.x - player.speed
 		love.audio.play(walkstone)
 		izquierdapj1:update(dt)
 		player.animation = izquierdapj1
 	end
-	if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+	if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and player.y < 565 then
 		player.y = player.y + player.speed
 		love.audio.play(walkstone)
 		abajopj1:update(dt)
 		player.animation = abajopj1
 	end
-	if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and player.y > 1 then
 		player.y = player.y - player.speed
 		love.audio.play(walkstone)
 		arribapj1:update(dt)
