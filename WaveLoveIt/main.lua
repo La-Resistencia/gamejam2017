@@ -1,7 +1,7 @@
 love.window.setTitle("Wave Paths")
 love.graphics.setDefaultFilter('nearest','nearest')
 
-success = love.window.setMode(388,600)
+success = love.window.setMode(338,600)
 
 function love.load()
 	drops = {}
