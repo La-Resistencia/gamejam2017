@@ -15,6 +15,8 @@ backsound:setLooping(true)
 
 walkstone = love.audio.newSource('walk_stone.mp3')
 walkwater = love.audio.newSource('walk_water.mp3')
+win = love.audio.newSource('winning.mp3')
+gameover = love.audio.newSource('game-over.mp3')
 dropaudio = {love.audio.newSource('drop1.mp3'),love.audio.newSource('drop2.mp3'), love.audio.newSource('drop3.mp3'), love.audio.newSource('drop4.mp3'),love.audio.newSource('drop5.mp3'),love.audio.newSource('drop6.mp3'),love.audio.newSource('drop7.mp3')}
 
 izquierdapj1 = newAnimation(love.graphics.newImage('pjleft.png'),29,34,0.1,4)
@@ -67,13 +69,6 @@ function love.load()
             drop.t = 0
         end
     end
-
-    validateTime = function()
-		if time <= 0 then
-			time = 0
-			-- end of game
-			end
-	end
 
     fpsCounter = 0
 
@@ -134,7 +129,16 @@ function love.update(dt)
         validateDrop(drop)
     end
 
-	time = time - dt
+    if player.x >= 49 and player.x <=289 and player.y >= 0 and player.y <= 96 then
+    	love.audio.play(win)
+    end
+
+    if time <= 0 then
+    	time = 0
+    	love.audio.play(gameover)
+    else
+		time = time - dt
+	end
 end
 
 function love.draw()
@@ -180,19 +184,18 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 	love.graphics.draw(inicio,0,525,0,2.347)
 	love.graphics.draw(fin,49,0,0,3)
-	validateTime()
 	timeInteger = math.floor(time);
 	timeString = timeInteger;
 	if timeInteger < 10 then
 		timeString = "0"..timeString
 	end
 
-	love.graphics.setColor(255,255,255)
 	love.graphics.setFont(font)
 	love.graphics.print(timeString, 9, 319);
 	love.graphics.setFont(counterFont)
 	love.graphics.print("10", 18, 232);
 	love.graphics.print("9999", 250, 275);
+
 
 	player.animation:draw(player.x,player.y,0,1)
 end
