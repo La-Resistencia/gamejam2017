@@ -1,7 +1,8 @@
 require("animation")
 
+
 love.window.setTitle("Wave Paths")
-love.graphics.setDefaultFilter('nearest', 'nearest')
+love.graphics.setDefaultFilter('nearest','nearest')
 
 mar = love.graphics.newImage('Mar.png')
 maranim = newAnimation(mar,144,256,0.28,4)
@@ -15,11 +16,20 @@ walkstone = love.audio.newSource('walk_stone.mp3')
 walkwater = love.audio.newSource('walk_water.mp3')
 dropaudio = {love.audio.newSource('drop1.mp3'),love.audio.newSource('drop2.mp3'), love.audio.newSource('drop3.mp3'), love.audio.newSource('drop4.mp3'),love.audio.newSource('drop5.mp3'),love.audio.newSource('drop6.mp3'),love.audio.newSource('drop7.mp3')}
 
+izquierdapj1 = newAnimation(love.graphics.newImage('pjleft.png'),29,34,0.1,4)
+derechapj1 = newAnimation(love.graphics.newImage('pjright.png'),29,34,0.1,4)
+arribapj1 = newAnimation(love.graphics.newImage('pjback.png'),29,34,0.1,4)
+abajopj1 = newAnimation(love.graphics.newImage('pjfront.png'),29,34,0.1,4)
+
+
+
+
 function love.load()
 	player = {}
-	player.x = 165
-	player.y = 568
+	player.x = 159
+	player.y = 556
 	player.speed = 3
+	player.animation = abajopj1
 
 	cursor = {}
 	cursor.x = 0
@@ -54,13 +64,15 @@ function love.load()
         	drop.sound = dropaudio[math.random(7)]
         	love.audio.play(drop.sound)
     	end
-        drop.t = drop.t + 1
-        if drop.t > 6000 then
+        drop.t = drop.t + 2.5
+        if drop.t > 600 then
             drop.t = 0
         end
     end
 
     fpsCounter = 0
+
+
 end
 
 function love.update(dt)
@@ -69,18 +81,26 @@ function love.update(dt)
 	if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
 		player.x = player.x + player.speed
 		love.audio.play(walkstone)
+		derechapj1:update(dt)
+		player.animation = derechapj1
 	end
 	if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
 		player.x = player.x - player.speed
 		love.audio.play(walkstone)
+		izquierdapj1:update(dt)
+		player.animation = izquierdapj1
 	end
 	if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
 		player.y = player.y + player.speed
 		love.audio.play(walkstone)
+		abajopj1:update(dt)
+		player.animation = abajopj1
 	end
 	if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
 		player.y = player.y - player.speed
 		love.audio.play(walkstone)
+		arribapj1:update(dt)
+		player.animation = arribapj1
 	end
 	if love.mouse.isDown(1) then
 		cursor.x = love.mouse.getX()
@@ -110,7 +130,7 @@ end
 function love.draw()
 	love.graphics.setColor(255,255,255)
 	maranim:draw(0,0,0,4)
-	love.graphics.rectangle("fill",player.x,player.y,30,30)
+	player.animation:draw(player.x,player.y,0,1)
 	for _,v in pairs(gotas) do
 		love.graphics.rectangle("fill",v.x-3,v.y-3,7,7)
 	end
