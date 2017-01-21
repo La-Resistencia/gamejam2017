@@ -1,6 +1,5 @@
 require("animation")
 
-
 love.window.setTitle("Wave Paths")
 love.graphics.setDefaultFilter('nearest','nearest')
 
@@ -20,9 +19,6 @@ izquierdapj1 = newAnimation(love.graphics.newImage('pjleft.png'),29,34,0.1,4)
 derechapj1 = newAnimation(love.graphics.newImage('pjright.png'),29,34,0.1,4)
 arribapj1 = newAnimation(love.graphics.newImage('pjback.png'),29,34,0.1,4)
 abajopj1 = newAnimation(love.graphics.newImage('pjfront.png'),29,34,0.1,4)
-
-
-
 
 function love.load()
 	player = {}
@@ -72,7 +68,10 @@ function love.load()
 
     fpsCounter = 0
 
+	font = love.graphics.newImageFont("font.png"," 1234567890")
+	love.graphics.setFont(font)
 
+	time = 60
 end
 
 function love.update(dt)
@@ -124,7 +123,9 @@ function love.update(dt)
 	end
     for i, drop in pairs(drops) do
         validateDrop(drop)
-    end
+	end
+
+	time = time - dt
 end
 
 function love.draw()
@@ -168,4 +169,9 @@ function love.draw()
                 end
             end
 	end
+
+	-- timer
+	love.graphics.print(math.floor(time), 150, 10);
+
+
 end
