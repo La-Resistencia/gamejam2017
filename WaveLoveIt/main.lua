@@ -9,6 +9,11 @@ maranim = newAnimation(mar,144,256,0.28,4)
 
 success = love.window.setMode(338,600)
 
+backsound = love.audio.newSource('When The Wind Blows.mp3')
+backsound:setLooping(true)
+
+
+
 
 
 function love.load()
@@ -45,6 +50,9 @@ function love.load()
     end
 
     validateDrop = function(drop)
+    	if drop.t == 0 then
+
+    	end
         drop.t = drop.t + 2.5
         if drop.t > 600 then
             drop.t = 0
@@ -58,16 +66,17 @@ end
 
 function love.update(dt)
 	maranim:update(dt)
-	if love.keyboard.isDown("d") then
+	love.audio.play(backsound)
+	if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
 		player.x = player.x + player.speed
 	end
-	if love.keyboard.isDown("a") then
+	if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
 		player.x = player.x - player.speed
 	end
-	if love.keyboard.isDown("s") then
+	if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
 		player.y = player.y + player.speed
 	end
-	if love.keyboard.isDown("w") then
+	if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
 		player.y = player.y - player.speed
 	end
 	if love.mouse.isDown(1) then
