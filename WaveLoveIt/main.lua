@@ -78,7 +78,7 @@ function love.load()
     fpsCounter = 0
 
 	font = love.graphics.newImageFont("font.png"," 1234567890")
-	love.graphics.setFont(font)
+	counterFont = love.graphics.newImageFont("font1.png"," 1234567890")
 
 	time = 60
 end
@@ -186,6 +186,13 @@ function love.draw()
 	if timeInteger < 10 then
 		timeString = "0"..timeString
 	end
+
+	love.graphics.setColor(255,255,255)
+	love.graphics.setFont(font)
 	love.graphics.print(timeString, 145, 10);
+	love.graphics.setFont(counterFont)
+	love.graphics.print("10", 40, 15);
+	love.graphics.print("9999", 250, 15);
+
 	player.animation:draw(player.x,player.y,0,1)
 end
