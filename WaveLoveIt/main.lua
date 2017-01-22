@@ -243,6 +243,13 @@ function love.draw()
         radio = math.floor(drop.t/10)
         love.graphics.circle("line", drop.x, drop.y, radio)
 	end
+
+	love.graphics.setLineWidth(30)
+	love.graphics.setColor(0, 0, 180)
+	for i, path in pairs(paths) do
+		love.graphics.line(path.x1, path.y1, path.x2, path.y2)
+	end
+
 	love.graphics.setColor(255,255,255)
 
 	love.graphics.draw(inicio,0,525,0,2.347)
