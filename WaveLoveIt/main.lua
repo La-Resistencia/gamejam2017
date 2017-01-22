@@ -315,6 +315,7 @@ function love.update(dt)
 		if time <= 0 or player.alive == false then
 			time = 0
 			love.audio.play(gameover)
+			currentState = 2
 		else
 			if player.winFactor == 0 then
 				time = time - dt
