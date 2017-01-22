@@ -10,6 +10,8 @@ scoreimg = love.graphics.newImage('score.png')
 
 dropimg = love.graphics.newImage('drop.png')
 enoughdropimg = love.graphics.newImage('enoughdrop.png')
+wave = newAnimation(love.graphics.newImage('wave.png'),16,16,0.28,3)
+pathimg = newAnimation(love.graphics.newImage('path.png'),16,16,0.2,3)
 
 maranim = newAnimation(love.graphics.newImage('Mar.png'),144,256,0.28,4)
 
