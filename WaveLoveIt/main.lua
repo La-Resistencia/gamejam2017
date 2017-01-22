@@ -5,6 +5,11 @@ love.graphics.setDefaultFilter('nearest','nearest')
 
 inicio = love.graphics.newImage('start.png')
 fin = love.graphics.newImage('end.png')
+clockimg = newAnimation(love.graphics.newImage('clock.png'),16,16,0.1,2)
+scoreimg = love.graphics.newImage('score.png')
+
+dropimg = love.graphics.newImage('drop.png')
+enoughdropimg = love.graphics.newImage('enoughdrop.png')
 
 maranim = newAnimation(love.graphics.newImage('Mar.png'),144,256,0.28,4)
 
@@ -42,7 +47,8 @@ function love.load()
 
 	drops = {}
 
-	contador=0
+	contador=10
+	countdropimg = dropimg
 
 	insertDrop = function (x, y)
 		drop = {}
@@ -191,7 +197,12 @@ function love.update(dt)
 			end
 		end
 		if droped and cursor.cddrop <= 0 then
-			contador=contador+1
+			if contador > 0 then
+				contador=contador-1
+			end
+			if countdropimg == dropimg and contador == 0 then
+				countdropimg = enoughdropimg
+			end
 			insertDrop(cursor.x,cursor.y);
 			cursor.cddrop = 2
 		end
@@ -205,6 +216,10 @@ function love.update(dt)
 	end
     for i, drop in pairs(drops) do
         validateDrop(drop)
+    end
+
+    if time <= 15 then
+    	clockimg:update(dt)
     end
 
     if time <= 0 or player.alive == false then
@@ -225,16 +240,19 @@ function love.draw()
         radio = math.floor(drop.t/10)
         love.graphics.circle("line", drop.x, drop.y, radio)
 	end
-
-	love.graphics.setLineWidth(30)
-	love.graphics.setColor(0, 0, 180)
-	for i, path in pairs(paths) do
-		love.graphics.line(path.x1, path.y1, path.x2, path.y2)
-	end
-
 	love.graphics.setColor(255,255,255)
+
 	love.graphics.draw(inicio,0,525,0,2.347)
 	love.graphics.draw(fin,49,0,0,3)
+
+	player.animation:draw(player.x,player.y,0,1)
+
+	------ HUD ----------
+
+	clockimg:draw(1,290,0,4.8)
+	love.graphics.draw(countdropimg,34,232,0,2)
+	love.graphics.draw(scoreimg,230,270,0,2)
+
 	timeInteger = math.floor(time);
 	timeString = timeInteger;
 	if timeInteger < 10 then
@@ -242,12 +260,9 @@ function love.draw()
 	end
 
 	love.graphics.setFont(font)
-	love.graphics.print(timeString, 9, 319)
+	love.graphics.print(timeString, 18, 322,0,0.5)
 	love.graphics.setFont(counterFont)
-	love.graphics.print(contador, 18, 232)
+	love.graphics.setColor(0, 35, 20)
+	love.graphics.print(contador, 10, 232)
 	love.graphics.print("9999", 250, 275)
-
-
-
-	player.animation:draw(player.x,player.y,0,1)
 end
