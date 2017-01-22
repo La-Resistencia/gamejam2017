@@ -1,5 +1,7 @@
 require("animation")
 
+currentState = 0
+
 love.window.setTitle("Wave Paths")
 love.graphics.setDefaultFilter('nearest','nearest')
 
@@ -10,9 +12,13 @@ scoreimg = love.graphics.newImage('score.png')
 
 dropimg = love.graphics.newImage('drop.png')
 enoughdropimg = love.graphics.newImage('enoughdrop.png')
+playButtonImg = love.graphics.newImage('play.jpg')
+gameOverImg = love.graphics.newImage('gameOver.jpg')
 
 maranim = newAnimation(love.graphics.newImage('Mar.png'),144,256,0.28,4)
 
+windowHeight = 600
+windowWidth = 338
 success = love.window.setMode(338,600)
 
 backsound = love.audio.newSource('When The Wind Blows.mp3')
@@ -119,161 +125,195 @@ function love.load()
 	counterFont = love.graphics.newImageFont("font1.png"," 1234567890")
 
 	time = 60
+
 end
 
 function love.update(dt)
-	maranim:update(dt)
-	love.audio.play(backsound)
+	if currentState == 0 then
+		if love.mouse.isDown(1) then
+			cursor.x = love.mouse.getX()
+			cursor.y = love.mouse.getY()
+			if cursor.x > 121 and cursor.x < 241 and cursor.y > 300 and cursor.y < 400 then
+				currentState = 1
+				fpsCounter = 10
+				return
+			end
+		end	
+	end
 
-	player.alive = false
+	if currentState == 2 then
 
+	end
 
+	if currentState == 1 then
+		fpsCounter = fpsCounter-1
+		if fpsCounter > 0 then return end
 
-    ---PLATAFORMAS
-    paths = {}
+		maranim:update(dt)
+		love.audio.play(backsound)
 
-	for i, drop in pairs(drops) do
-		radio = math.floor(drop.t/10)
-		-- detect a interception with another drop wave
-		for j, drop2 in pairs(drops) do
-			if i ~= j then
-				radio2 = math.floor(drop2.t/10)
-				discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
+		player.alive = false
 
-				if discriminator > 0 then
-					d = math.sqrt(discriminator)
-					l = (radio*radio - radio2*radio2 + d*d)/(2*d)
-					h = math.sqrt(radio*radio - l*l)
+		---PLATAFORMAS
+		paths = {}
 
-					x1 = l/d*(drop2.x - drop.x) + h/d*(drop2.y - drop.y) + drop.x
-					y1 = l/d*(drop2.y - drop.y) - h/d*(drop2.x - drop.x) + drop.y
+		for i, drop in pairs(drops) do
+			radio = math.floor(drop.t/10)
+			-- detect a interception with another drop wave
+			for j, drop2 in pairs(drops) do
+				if i ~= j then
+					radio2 = math.floor(drop2.t/10)
+					discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
 
-					x2 = l/d*(drop2.x - drop.x) - h/d*(drop2.y - drop.y) + drop.x
-					y2 = l/d*(drop2.y - drop.y) + h/d*(drop2.x - drop.x) + drop.y
+					if discriminator > 0 then
+						d = math.sqrt(discriminator)
+						l = (radio*radio - radio2*radio2 + d*d)/(2*d)
+						h = math.sqrt(radio*radio - l*l)
 
-					insertPath(x1, y1, x2, y2)
+						x1 = l/d*(drop2.x - drop.x) + h/d*(drop2.y - drop.y) + drop.x
+						y1 = l/d*(drop2.y - drop.y) - h/d*(drop2.x - drop.x) + drop.y
+
+						x2 = l/d*(drop2.x - drop.x) - h/d*(drop2.y - drop.y) + drop.x
+						y2 = l/d*(drop2.y - drop.y) + h/d*(drop2.x - drop.x) + drop.y
+
+						insertPath(x1, y1, x2, y2)
+					end
 				end
 			end
 		end
-	end
 
-	validatePlayerPosition()
+		validatePlayerPosition()
 
-	if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
-		love.audio.play(win)
-		player.alive = true
-	end
-	if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
-		player.alive = true
-	end
-
-	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 322 then
-		player.x = player.x + player.speed
-		love.audio.play(walkstone)
-		derechapj1:update(dt)
-		player.animation = derechapj1
-	end
-	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and player.x > 15 then
-		player.x = player.x - player.speed
-		love.audio.play(walkstone)
-		izquierdapj1:update(dt)
-		player.animation = izquierdapj1
-	end
-	if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and player.y < 595 then
-		player.y = player.y + player.speed
-		love.audio.play(walkstone)
-		abajopj1:update(dt)
-		player.animation = abajopj1
-	end
-	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and player.y > 31 then
-		player.y = player.y - player.speed
-		love.audio.play(walkstone)
-		arribapj1:update(dt)
-		player.animation = arribapj1
-	end
-	if love.mouse.isDown(1) then
-		cursor.x = love.mouse.getX()
-		cursor.y = love.mouse.getY()
-		for _,v in pairs(drops) do
-			if cursor.x >= v.x-3 and cursor.x <= v.x+3 and cursor.y >= v.y-3 and cursor.y <= v.y+3 then
-				droped = false
-			end
+		if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
+			love.audio.play(win)
+			player.alive = true
 		end
-		if droped and cursor.cddrop <= 0 then
-			if contador > 0 then
-				contador=contador-1
-			end
-			if countdropimg == dropimg and contador == 0 then
-				countdropimg = enoughdropimg
-			end
-			insertDrop(cursor.x,cursor.y);
-			cursor.cddrop = 2
+		if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
+			player.alive = true
 		end
-		droped = true
-	end
-	if cursor.cddrop > 0 then
-		cursor.cddrop = cursor.cddrop - 4*dt
-	end
-	if cursor.cd > 0 then
-		cursor.cd = cursor.cd - 4*dt
-	end
-    for i, drop in pairs(drops) do
-        validateDrop(drop)
-    end
 
-    if time <= 15 then
-    	clockimg:update(dt)
-    end
+		if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 322 then
+			player.x = player.x + player.speed
+			love.audio.play(walkstone)
+			derechapj1:update(dt)
+			player.animation = derechapj1
+		end
+		if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and player.x > 15 then
+			player.x = player.x - player.speed
+			love.audio.play(walkstone)
+			izquierdapj1:update(dt)
+			player.animation = izquierdapj1
+		end
+		if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and player.y < 595 then
+			player.y = player.y + player.speed
+			love.audio.play(walkstone)
+			abajopj1:update(dt)
+			player.animation = abajopj1
+		end
+		if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and player.y > 31 then
+			player.y = player.y - player.speed
+			love.audio.play(walkstone)
+			arribapj1:update(dt)
+			player.animation = arribapj1
+		end
+		if love.mouse.isDown(1) then
+			cursor.x = love.mouse.getX()
+			cursor.y = love.mouse.getY()
+			for _,v in pairs(drops) do
+				if cursor.x >= v.x-3 and cursor.x <= v.x+3 and cursor.y >= v.y-3 and cursor.y <= v.y+3 then
+					droped = false
+				end
+			end
+			if droped and cursor.cddrop <= 0 then
+				if contador > 0 then
+					contador=contador-1
+				end
+				if countdropimg == dropimg and contador == 0 then
+					countdropimg = enoughdropimg
+				end
+				insertDrop(cursor.x,cursor.y);
+				cursor.cddrop = 2
+			end
+			droped = true
+		end
+		if cursor.cddrop > 0 then
+			cursor.cddrop = cursor.cddrop - 4*dt
+		end
+		if cursor.cd > 0 then
+			cursor.cd = cursor.cd - 4*dt
+		end
+		for i, drop in pairs(drops) do
+			validateDrop(drop)
+		end
 
-    if time <= 0 or player.alive == false then
-    	time = 0
-    	love.audio.play(gameover)
-    else
-		time = time - dt
+		if time <= 15 then
+			clockimg:update(dt)
+		end
+
+		if time <= 0 or player.alive == false then
+			time = 0
+			love.audio.play(gameover)
+		else
+			time = time - dt
+		end
 	end
 end
 
 function love.draw()
-	love.graphics.setColor(255,255,255)
-	maranim:draw(0,0,0,4)
-	for i, drop in pairs(drops) do
-        love.graphics.setLineWidth(1)
+	if currentState == 0 then
+		love.graphics.setLineWidth(1)
 		love.graphics.setColor(4, 121, 251)
-		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
-        radio = math.floor(drop.t/10)
-        love.graphics.circle("line", drop.x, drop.y, radio)
+		love.graphics.draw(playButtonImg,118,300)
+
 	end
 
-	love.graphics.setLineWidth(30)
-	love.graphics.setColor(0, 0, 180)
-	for i, path in pairs(paths) do
-		love.graphics.line(path.x1, path.y1, path.x2, path.y2)
+	if currentState == 2 then
+		love.graphics.setColor(4, 121, 251)
+		love.graphics.draw(gameOverImg,10,300,0,0.5,0.5)
 	end
 
-	love.graphics.setColor(255,255,255)
+	if currentState == 1 then
+		love.graphics.setColor(255,255,255)
+		maranim:draw(0,0,0,4)
+		for i, drop in pairs(drops) do
+			love.graphics.setLineWidth(1)
+			love.graphics.setColor(4, 121, 251)
+			love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
+			radio = math.floor(drop.t/10)
+			love.graphics.circle("line", drop.x, drop.y, radio)
+		end
 
-	love.graphics.draw(inicio,0,525,0,2.347)
-	love.graphics.draw(fin,49,0,0,3)
+		love.graphics.setLineWidth(30)
+		love.graphics.setColor(0, 0, 180)
+		for i, path in pairs(paths) do
+			love.graphics.line(path.x1, path.y1, path.x2, path.y2)
+		end
 
-	player.animation:draw(player.x,player.y,0,1,1,14,30)
-	love.graphics.rectangle("fill",player.x, player.y,2,2)
+		love.graphics.setColor(255,255,255)
 
-	------ HUD ----------
+		love.graphics.draw(inicio,0,525,0,2.347)
+		love.graphics.draw(fin,49,0,0,3)
 
-	clockimg:draw(1,290,0,4.8)
-	love.graphics.draw(countdropimg,34,232,0,2)
-	love.graphics.draw(scoreimg,230,270,0,2)
+		player.animation:draw(player.x,player.y,0,1,1,14,30)
+		love.graphics.rectangle("fill",player.x, player.y,2,2)
 
-	timeInteger = math.floor(time);
-	timeString = timeInteger;
-	if timeInteger < 10 then
-		timeString = "0"..timeString
+		------ HUD ----------
+
+		clockimg:draw(1,290,0,4.8)
+		love.graphics.draw(countdropimg,34,232,0,2)
+		love.graphics.draw(scoreimg,230,270,0,2)
+
+		timeInteger = math.floor(time);
+		timeString = timeInteger;
+		if timeInteger < 10 then
+			timeString = "0"..timeString
+		end
+
+		love.graphics.setFont(font)
+		love.graphics.print(timeString, 18, 322,0,0.5)
+		love.graphics.setFont(counterFont)
+		love.graphics.setColor(0, 35, 20)
+		love.graphics.print(contador, 10, 232)
+		love.graphics.print("9999", 250, 275)
 	end
-
-	love.graphics.setFont(font)
-	love.graphics.print(timeString, 18, 322,0,0.5)
-	love.graphics.setFont(counterFont)
-	love.graphics.setColor(0, 35, 20)
-	love.graphics.print(contador, 10, 232)
-	love.graphics.print("9999", 250, 275)
 end
