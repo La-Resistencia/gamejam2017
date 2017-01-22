@@ -175,7 +175,7 @@ function love.update(dt)
 
 	wave:update(dt)
 	pathimg:update(dt)
-
+	
 	for i, drop in pairs(drops) do
 		radio = math.floor(drop.t/10)
 		-- detect a interception with another drop wave
@@ -322,6 +322,7 @@ function love.draw()
 	if player.jumpbool then
 		sombra:draw(player.x-13,player.y+player.cdjump*2-28,0,1)
 	end
+
 	player.animation:draw(player.x,player.y,0,1,1,14,30)
 	love.graphics.rectangle("fill",player.x, player.y,2,2)
 
