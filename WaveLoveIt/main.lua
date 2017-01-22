@@ -38,6 +38,33 @@ function love.load()
 	player.alive = true
 	player.winFactor = 0
 
+	player.cdjump = 0
+	player.jumpbool = false
+	player.fallbool = false
+
+	player.jump = function ()
+		player.cdjump = player.cdjump + 0.1
+		player.jumpbool = true
+	end
+
+	player.fall = function ()
+		if player.cdjump < 3 and player.jumpbool and player.fallbool == false then
+			player.cdjump = player.cdjump + 0.1
+		end
+		if player.cdjump >= 3 then
+			player.fallbool = true
+		end
+		if player.cdjump > 0 and player.fallbool then
+			player.cdjump = player.cdjump - 0.1
+		end
+		if player.cdjump <= 0 and player.fallbool then
+			player.fallbool = false
+		end
+		if player.fallbool == false and player.cdjump <= 0 then
+			player.jumpbool = false
+		end
+	end
+
 	cursor = {}
 	cursor.x = 0
 	cursor.y = 0
@@ -141,6 +168,9 @@ function love.update(dt)
     ---PLATAFORMAS
     paths = {}
 
+	wave:update(dt)
+	pathimg:update(dt)
+	
 	for i, drop in pairs(drops) do
 		radio = math.floor(drop.t/10)
 		-- detect a interception with another drop wave
@@ -166,14 +196,16 @@ function love.update(dt)
 		end
 	end
 
-	validatePlayerPosition()
-
-	if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
-		player.winFactor = 1
-		love.audio.play(win)
-		player.alive = true
-	end
-	if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
+	if player.jumpbool == false then
+		validatePlayerPosition()
+		if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
+			love.audio.play(win)
+			player.alive = true
+		end
+		if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
+			player.alive = true
+		end
+	else
 		player.alive = true
 	end
 
@@ -229,6 +261,11 @@ function love.update(dt)
 		end
 		droped = true
 	end
+	if love.keyboard.isDown("space") and player.cdjump <= 0 then
+		player.jump()
+	end
+
+	player.fall()
 	if cursor.cddrop > 0 then
 		cursor.cddrop = cursor.cddrop - 4*dt
 	end
@@ -246,8 +283,10 @@ function love.update(dt)
     if time <= 0 or player.alive == false then
     	time = 0
     	love.audio.play(gameover)
-    elseif player.winFactor == 0 then
-		time = time - dt
+    else
+    	if player.winFactor == 0 then
+			time = time - dt
+		end
 	end
 end
 
@@ -260,6 +299,8 @@ function love.draw()
 		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
         radio = math.floor(drop.t/10)
         love.graphics.circle("line", drop.x, drop.y, radio)
+		love.graphics.setColor(255,255,255)
+		wave:draw(drop.x-radio,drop.y-radio,0,drop.t/80)
 	end
 
 	love.graphics.setLineWidth(30)
