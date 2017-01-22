@@ -90,11 +90,14 @@ function love.load()
 
 				distance = math.abs((path.y2 - path.y1)*player.x - (path.x2 - path.x1)*player.y + path.x2*path.y1 - path.y2*path.x1)/segmentLength
 
-				if distance <= 30 then
-					projectionx = (player.x - path.x1)*(path.x2 - path.x1)/segmentLength
-					projectiony = (player.y - path.y1)*(path.y2 - path.y1)/segmentLength
+				if distance <= 15 then
 					segmentx = path.x2 - path.x1
 					segmenty = path.y2 - path.y1
+
+					factor = (player.x - path.x1)*segmentx/discriminant + (player.y - path.y1)*segmenty/discriminant
+
+					projectionx = factor*segmentx
+					projectiony = factor*segmenty
 
 					projectionLength = math.sqrt(projectionx*projectionx + projectiony*projectiony)
 					cosineOfProjection = (segmentx*projectionx + segmenty*projectiony)/segmentLength/projectionLength
