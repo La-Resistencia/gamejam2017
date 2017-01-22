@@ -42,16 +42,18 @@ function love.load()
 				config.lastDistance = distance
 
 				if distance <= config.lineWidth/2 then
-					projectionx = (player.x - path.x1)*(path.x2 - path.x1)/segmentLength
-					projectiony = (player.y - path.y1)*(path.y2 - path.y1)/segmentLength
 					segmentx = path.x2 - path.x1
 					segmenty = path.y2 - path.y1
 
+					factor = (player.x - path.x1)*segmentx/discriminant + (player.y - path.y1)*segmenty/discriminant
+
+					projectionx = factor*segmentx
+					projectiony = factor*segmenty
+					
 					projectionLength = math.sqrt(projectionx*projectionx + projectiony*projectiony)
 					cosineOfProjection = (segmentx*projectionx + segmenty*projectiony)/segmentLength/projectionLength
 
 					config.lastCosine = cosineOfProjection
-
 
 					if cosineOfProjection > 0 and projectionLength < segmentLength then
 						player.alive = true
