@@ -15,6 +15,7 @@ enoughdropimg = love.graphics.newImage('enoughdrop.png')
 
 playButtonImg = love.graphics.newImage('play.jpg')
 gameOverImg = love.graphics.newImage('gameOver.jpg')
+gameOverWinImg = love.graphics.newImage('gameOverWin.png')
 
 wave = newAnimation(love.graphics.newImage('wave.png'),16,16,0.28,3)
 pathimg = newAnimation(love.graphics.newImage('path.png'),16,16,0.2,3)
@@ -184,7 +185,7 @@ function love.update(dt)
 		end
 		end
 	end
-	if currentState == 2 then
+	if currentState == 2 or currentState == 3 then
 	end
 
 	if currentState == 1 then
@@ -233,6 +234,7 @@ function love.update(dt)
 			if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
 				love.audio.play(win)
 				player.alive = true
+				currentState = 3
 			end
 			if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
 				player.alive = true
@@ -334,6 +336,11 @@ function love.draw()
 	if currentState == 2 then
 		love.graphics.setColor(4, 121, 251)
 		love.graphics.draw(gameOverImg,10,300,0,0.5,0.5)
+	end
+
+	if currentState == 3 then
+		love.graphics.setColor(4, 121, 251)
+		love.graphics.draw(gameOverWinImg,10,300,0,0.5,0.5)
 	end
 
 	if currentState == 1 then
