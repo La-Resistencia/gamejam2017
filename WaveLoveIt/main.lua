@@ -159,33 +159,33 @@ function love.update(dt)
 
 	validatePlayerPosition()
 
-	if player.x >= 49 and player.x <= 260 and player.y >= 0 and player.y <= 66 then
+	if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
 		love.audio.play(win)
 		player.alive = true
 	end
-	if player.x >= 0 and player.x <= 309 and player.y >= 494 and player.y <= 600 then
+	if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
 		player.alive = true
 	end
 
-	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 308 then
+	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 322 then
 		player.x = player.x + player.speed
 		love.audio.play(walkstone)
 		derechapj1:update(dt)
 		player.animation = derechapj1
 	end
-	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and player.x > 1 then
+	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and player.x > 15 then
 		player.x = player.x - player.speed
 		love.audio.play(walkstone)
 		izquierdapj1:update(dt)
 		player.animation = izquierdapj1
 	end
-	if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and player.y < 565 then
+	if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and player.y < 595 then
 		player.y = player.y + player.speed
 		love.audio.play(walkstone)
 		abajopj1:update(dt)
 		player.animation = abajopj1
 	end
-	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and player.y > 1 then
+	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and player.y > 31 then
 		player.y = player.y - player.speed
 		love.audio.play(walkstone)
 		arribapj1:update(dt)
