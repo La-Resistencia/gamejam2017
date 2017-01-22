@@ -12,8 +12,11 @@ scoreimg = love.graphics.newImage('score.png')
 
 dropimg = love.graphics.newImage('drop.png')
 enoughdropimg = love.graphics.newImage('enoughdrop.png')
+
 playButtonImg = love.graphics.newImage('play.jpg')
 gameOverImg = love.graphics.newImage('gameOver.jpg')
+wave = newAnimation(love.graphics.newImage('wave.png'),16,16,0.28,3)
+pathimg = newAnimation(love.graphics.newImage('path.png'),16,16,0.2,3)
 
 maranim = newAnimation(love.graphics.newImage('Mar.png'),144,256,0.28,4)
 
@@ -42,6 +45,34 @@ function love.load()
 	player.speed = 3
 	player.animation = abajopj1
 	player.alive = true
+	player.winFactor = 0
+
+	player.cdjump = 0
+	player.jumpbool = false
+	player.fallbool = false
+
+	player.jump = function ()
+		player.cdjump = player.cdjump + 0.1
+		player.jumpbool = true
+	end
+
+	player.fall = function ()
+		if player.cdjump < 3 and player.jumpbool and player.fallbool == false then
+			player.cdjump = player.cdjump + 0.1
+		end
+		if player.cdjump >= 3 then
+			player.fallbool = true
+		end
+		if player.cdjump > 0 and player.fallbool then
+			player.cdjump = player.cdjump - 0.1
+		end
+		if player.cdjump <= 0 and player.fallbool then
+			player.fallbool = false
+		end
+		if player.fallbool == false and player.cdjump <= 0 then
+			player.jumpbool = false
+		end
+	end
 
 	cursor = {}
 	cursor.x = 0
@@ -126,6 +157,14 @@ function love.load()
 
 	time = 60
 
+	stageCompletion = 0
+
+	config = {}
+	config.remainDropScoreFactor = 10
+	config.remainTimeScoreFactor = 10
+	config.stageCompletionScoreFactor = 1
+	config.winFactor = 500
+
 end
 
 function love.update(dt)
@@ -153,6 +192,18 @@ function love.update(dt)
 		love.audio.play(backsound)
 
 		player.alive = false
+
+	wave:update(dt)
+	pathimg:update(dt)
+	
+	for i, drop in pairs(drops) do
+		radio = math.floor(drop.t/10)
+		-- detect a interception with another drop wave
+		for j, drop2 in pairs(drops) do
+			if i ~= j then
+				radio2 = math.floor(drop2.t/10)
+				discriminator = (drop.x - drop2.x)*(drop.x - drop2.x) + (drop.y - drop2.y)*(drop.y - drop2.y)
+
 
 		---PLATAFORMAS
 		paths = {}
@@ -184,6 +235,9 @@ function love.update(dt)
 
 		validatePlayerPosition()
 
+
+	if player.jumpbool == false then
+		validatePlayerPosition()
 		if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
 			love.audio.play(win)
 			player.alive = true
@@ -191,6 +245,17 @@ function love.update(dt)
 		if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
 			player.alive = true
 		end
+	else
+		player.alive = true
+	end
+
+	stageCompletion = (524.0 - player.y)/(524.0 - 96.0)
+	if stageCompletion < 0 then
+		stageCompletion = 0
+	end
+	if stageCompletion > 1 then
+		stageCompletion = 1
+	end
 
 		if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 322 then
 			player.x = player.x + player.speed
@@ -246,6 +311,23 @@ function love.update(dt)
 			validateDrop(drop)
 		end
 
+		droped = true
+	end
+	if love.keyboard.isDown("space") and player.cdjump <= 0 then
+		player.jump()
+	end
+
+	player.fall()
+	if cursor.cddrop > 0 then
+		cursor.cddrop = cursor.cddrop - 4*dt
+	end
+	if cursor.cd > 0 then
+		cursor.cd = cursor.cd - 4*dt
+	end
+    for i, drop in pairs(drops) do
+        validateDrop(drop)
+    end
+
 		if time <= 15 then
 			clockimg:update(dt)
 		end
@@ -254,6 +336,11 @@ function love.update(dt)
 			time = 0
 			love.audio.play(gameover)
 		else
+    if time <= 0 or player.alive == false then
+    	time = 0
+    	love.audio.play(gameover)
+    else
+    	if player.winFactor == 0 then
 			time = time - dt
 		end
 	end
@@ -264,7 +351,11 @@ function love.draw()
 		love.graphics.setLineWidth(1)
 		love.graphics.setColor(4, 121, 251)
 		love.graphics.draw(playButtonImg,118,300)
-
+		love.graphics.rectangle("fill", drop.x, drop.y, 2, 2)
+        radio = math.floor(drop.t/10)
+        love.graphics.circle("line", drop.x, drop.y, radio)
+		love.graphics.setColor(255,255,255)
+		wave:draw(drop.x-radio,drop.y-radio,0,drop.t/80)
 	end
 
 	if currentState == 2 then
@@ -316,4 +407,14 @@ function love.draw()
 		love.graphics.print(contador, 10, 232)
 		love.graphics.print("9999", 250, 275)
 	end
+	love.graphics.setFont(font)
+	love.graphics.print(timeString, 18, 322,0,0.5)
+	love.graphics.setFont(counterFont)
+	love.graphics.setColor(0, 35, 20)
+	love.graphics.print(contador, 10, 232)
+
+	score = time*config.remainTimeScoreFactor + contador*config.remainDropScoreFactor + stageCompletion*100*config.stageCompletionScoreFactor + player.winFactor*config.winFactor
+
+	love.graphics.print(math.floor(score), 250, 275)
+
 end
