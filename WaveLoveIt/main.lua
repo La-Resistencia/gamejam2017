@@ -36,6 +36,7 @@ function love.load()
 	player.speed = 3
 	player.animation = abajopj1
 	player.alive = true
+	player.winFactor = 0
 
 	cursor = {}
 	cursor.x = 0
@@ -119,6 +120,14 @@ function love.load()
 	counterFont = love.graphics.newImageFont("font1.png"," 1234567890")
 
 	time = 60
+
+	stageCompletion = 0
+
+	config = {}
+	config.remainDropScoreFactor = 10
+	config.remainTimeScoreFactor = 10
+	config.stageCompletionScoreFactor = 1
+	config.winFactor = 500
 end
 
 function love.update(dt)
@@ -160,11 +169,20 @@ function love.update(dt)
 	validatePlayerPosition()
 
 	if player.x >= 63 and player.x <= 274 and player.y >= 30 and player.y <= 96 then
+		player.winFactor = 1
 		love.audio.play(win)
 		player.alive = true
 	end
 	if player.x >= 14 and player.x <= 337 and player.y >= 524 and player.y <= 630 then
 		player.alive = true
+	end
+
+	stageCompletion = (524.0 - player.y)/(524.0 - 96.0)
+	if stageCompletion < 0 then
+		stageCompletion = 0
+	end
+	if stageCompletion > 1 then
+		stageCompletion = 1
 	end
 
 	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 322 then
@@ -228,7 +246,7 @@ function love.update(dt)
     if time <= 0 or player.alive == false then
     	time = 0
     	love.audio.play(gameover)
-    else
+    elseif player.winFactor == 0 then
 		time = time - dt
 	end
 end
@@ -275,5 +293,8 @@ function love.draw()
 	love.graphics.setFont(counterFont)
 	love.graphics.setColor(0, 35, 20)
 	love.graphics.print(contador, 10, 232)
-	love.graphics.print("9999", 250, 275)
+
+	score = time*config.remainTimeScoreFactor + contador*config.remainDropScoreFactor + stageCompletion*100*config.stageCompletionScoreFactor + player.winFactor*config.winFactor
+
+	love.graphics.print(math.floor(score), 250, 275)
 end
