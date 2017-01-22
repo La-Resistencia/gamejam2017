@@ -75,19 +75,32 @@ function love.load()
         end
 	end
 
-	validaPlayerPosition = function()
+	validatePlayerPosition = function()
 		for i, path in pairs(paths) do
 			discriminant = (path.y2 - path.y1)* (path.y2 - path.y1) + (path.x2 - path.x1)* (path.x2 - path.x1)
 
 			if discriminant > 0 then
-				distance = math.abs((path.y2 - path.y1)*player.x - (path.x2 - path.x1)*player.y + path.x2*path.y1 - path.y2*path.x1)/math.sqrt(discriminant)
+				segmentLength = math.sqrt(discriminant)
+
+				distance = math.abs((path.y2 - path.y1)*player.x - (path.x2 - path.x1)*player.y + path.x2*path.y1 - path.y2*path.x1)/segmentLength
 
 				if distance <= 30 then
-					return
+					projectionx = (player.x - path.x1)*(path.x2 - path.x1)/segmentLength
+					projectiony = (player.y - path.y1)*(path.y2 - path.y1)/segmentLength
+					segmentx = path.x2 - path.x1
+					segmenty = path.y2 - path.y1
+
+					projectionLength = math.sqrt(projectionx*projectionx + projectiony*projectiony)
+					cosineOfProjection = (segmentx*projectionx + segmenty*projectiony)/segmentLength/projectionLength
+
+					if cosineOfProjection > 0 and projectionLength < segmentLength then
+						player.alive = true
+						return
+					end
 				end
 			end
 
-			time = 0
+			player.alive = false
 		end
 	end
 
@@ -104,13 +117,8 @@ function love.update(dt)
 	love.audio.play(backsound)
 
 	player.alive = false
-    if player.x >= 49 and player.x <= 260 and player.y >= 0 and player.y <= 66 then
-    	love.audio.play(win)
-    	player.alive = true
-    end
-    if player.x >= 0 and player.x <= 309 and player.y >= 494 and player.y <= 600 then
-    	player.alive = true
-    end
+
+
 
     ---PLATAFORMAS
     paths = {}
@@ -138,6 +146,16 @@ function love.update(dt)
 				end
 			end
 		end
+	end
+
+	validatePlayerPosition()
+
+	if player.x >= 49 and player.x <= 260 and player.y >= 0 and player.y <= 66 then
+		love.audio.play(win)
+		player.alive = true
+	end
+	if player.x >= 0 and player.x <= 309 and player.y >= 494 and player.y <= 600 then
+		player.alive = true
 	end
 
 	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < 308 then
