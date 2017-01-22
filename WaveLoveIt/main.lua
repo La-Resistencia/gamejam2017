@@ -76,7 +76,7 @@ function love.load()
         	love.audio.play(drop.sound)
     	end
         drop.t = drop.t + 1.5
-        if drop.t > 600 then
+        if drop.t > 1800 then
             drop.t = 0
         end
 	end
@@ -255,7 +255,8 @@ function love.draw()
 	love.graphics.draw(inicio,0,525,0,2.347)
 	love.graphics.draw(fin,49,0,0,3)
 
-	player.animation:draw(player.x,player.y,0,1)
+	player.animation:draw(player.x,player.y,0,1,1,14,30)
+	love.graphics.rectangle("fill",player.x, player.y,2,2)
 
 	------ HUD ----------
 
